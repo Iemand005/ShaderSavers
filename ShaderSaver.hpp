@@ -9,6 +9,7 @@
 #endif
 
 #include <Graphics/Renderer.hpp>
+#include <ScreenSaverMode.hpp>
 #if defined(FE_USE_SDL)
 #include <SDL3/SDL.h>
 #else
