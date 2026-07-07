@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(Tunnel)
+project(ShaderSaver)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -36,13 +36,13 @@ file(GLOB_RECURSE IMGUI_SOURCE_FILES
 	${IMGUI_DIR}/imgui_draw.cpp
 )
 
-add_executable(Foxcraft
+add_executable(ShaderSaver
 	WIN32
 	${IMGUI_SOURCE_FILES}
 	main.cpp
 )
 
-target_include_directories(Foxcraft PRIVATE
+target_include_directories(ShaderSaver PRIVATE
 	include
 	../..
 	../../../include
@@ -53,30 +53,30 @@ target_include_directories(Foxcraft PRIVATE
 	../../Engine
 )
 
-target_link_libraries(Foxcraft PRIVATE
+target_link_libraries(ShaderSaver PRIVATE
 	Engine
 )
 
 if(NOT WIN32)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(PIPEWIRE REQUIRED libpipewire-0.3)
-target_include_directories(Foxcraft PRIVATE ${PIPEWIRE_INCLUDE_DIRS})
-target_link_libraries(Foxcraft PRIVATE ${PIPEWIRE_LIBRARIES})
-target_compile_options(Foxcraft PRIVATE ${PIPEWIRE_CFLAGS_OTHER})
+target_include_directories(ShaderSaver PRIVATE ${PIPEWIRE_INCLUDE_DIRS})
+target_link_libraries(ShaderSaver PRIVATE ${PIPEWIRE_LIBRARIES})
+target_compile_options(ShaderSaver PRIVATE ${PIPEWIRE_CFLAGS_OTHER})
 
 find_package(X11 REQUIRED)
 
-target_link_libraries(Foxcraft PRIVATE X11::X11)
+target_link_libraries(ShaderSaver PRIVATE X11::X11)
 endif()
 
-set_property(TARGET Foxcraft PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+set_property(TARGET ShaderSaver PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 	
 if(MSVC)
-	target_compile_options(Foxcraft PRIVATE $<$<CONFIG:Debug>:/Zi>)
+	target_compile_options(ShaderSaver PRIVATE $<$<CONFIG:Debug>:/Zi>)
 
-	target_link_options(Foxcraft PRIVATE $<$<CONFIG:Debug>:/DEBUG>)
+	target_link_options(ShaderSaver PRIVATE $<$<CONFIG:Debug>:/DEBUG>)
 
 	add_compile_options(/RTC1)
 endif()
 
-# set_target_properties(Foxcraft PROPERTIES SUFFIX ".scr")
+# set_target_properties(ShaderSaver PROPERTIES SUFFIX ".scr")
