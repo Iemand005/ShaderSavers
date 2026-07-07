@@ -8,7 +8,7 @@
 #define FE_EXCLUDE_SDL
 #endif
 
-#include "../../engine/Renderer.hpp"
+#include <Graphics/Renderer.hpp>
 #if defined(FE_USE_SDL)
 #include <SDL3/SDL.h>
 #else
