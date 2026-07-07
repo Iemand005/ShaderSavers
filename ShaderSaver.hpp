@@ -19,7 +19,7 @@
 
 #include <filesystem>
 
-enum class ScreenSaverMode { Window, Preview, Fullscreen, Config };
+// enum class ScreenSaverMode { Window, Preview, Fullscreen, Config };
 
 struct FrameBufferSystem {
     bool pingPong = true;
