@@ -68,7 +68,7 @@ class ShaderSaver : public fe::Renderer {
 	void ProcessInput() {
 #ifdef FE_USE_SDL
 		SDL_Event event;
-		fe::SDLWindow* window = (fe::SDLWindow*)this->window.get();
+		fe::SDLWindow* window = GetWindow<fe::SDLWindow>();
 		while (window->PollSDLEvents(&event)) {
 			switch (event.type) {
 				case SDL_EVENT_MOUSE_BUTTON_DOWN:
