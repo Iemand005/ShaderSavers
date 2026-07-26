@@ -8,7 +8,7 @@
 #define FE_EXCLUDE_SDL
 #endif
 
-#include <Graphics/Renderer.hpp>
+#include <Renderer.hpp>
 #include <ScreenSaverMode.hpp>
 #if defined(FE_USE_SDL)
 #include <SDL3/SDL.h>
