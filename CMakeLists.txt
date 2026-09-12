@@ -8,6 +8,8 @@ set(KISSFFT_TEST OFF CACHE BOOL "Disable KissFFT tests" FORCE)
 
 set(KISSFFT_STATIC ON CACHE BOOL "Build static library" FORCE)
 
+set(FE_EXCLUDE_GLFW OFF CACHE BOOL "Disable GLFW" FORCE)
+
 # add_subdirectory(${CMAKE_SOURCE_DIR}/../FenixEngine/src/Engine ${CMAKE_BINARY_DIR}/out/Engine)
 
 set(ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../FenixEngine")
