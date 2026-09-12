@@ -9,6 +9,7 @@ set(KISSFFT_TEST OFF CACHE BOOL "Disable KissFFT tests" FORCE)
 set(KISSFFT_STATIC ON CACHE BOOL "Build static library" FORCE)
 
 set(FE_EXCLUDE_GLFW OFF CACHE BOOL "Disable GLFW" FORCE)
+set(FE_EXCLUDE_OPENXR ON CACHE BOOL "Exclude OpenXR from the build" FORCE)
 
 # add_subdirectory(${CMAKE_SOURCE_DIR}/../FenixEngine/src/Engine ${CMAKE_BINARY_DIR}/out/Engine)
 
@@ -77,8 +78,13 @@ find_package(X11 REQUIRED)
 target_link_libraries(ShaderSaver PRIVATE X11::X11)
 endif()
 
-set_property(TARGET ShaderSaver PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-	
+set_property(TARGET ShaderSaver PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+file(GLOB SHADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/FragmentShader*.glsl)
+add_custom_command(TARGET ShaderSaver POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SHADER_FILES} $<TARGET_FILE_DIR:ShaderSaver>
+)
+
 if(MSVC)
 	target_compile_options(ShaderSaver PRIVATE $<$<CONFIG:Debug>:/Zi>)
 

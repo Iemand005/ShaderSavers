@@ -113,6 +113,10 @@ class ShaderSaver : public fe::Renderer {
 	bool Reload(const char* path, const char* vs) {
 		try {
 			LoadShaders(fe::Shader::Vertex(vs), fe::Shader::Fragment(path));
+			if (!shader->IsLinked()) {
+				std::cerr << "Shader link failed for: " << path << std::endl;
+				return false;
+			}
 			shader->Use();
 
 			uTime = glGetUniformLocation(shader->getId(), "time");
