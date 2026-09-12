@@ -189,13 +189,7 @@ class ShaderSaver : public fe::Renderer {
 		window->GetFramebufferSize(&width, &height);
 		Resize(width, height);
 
-
-		while (!window->ShouldClose()) {
-			ProcessInput();
-
-			if (mode != ScreenSaverMode::Fullscreen)
-				HotReload(fs, vs);
-
+		auto renderFrame = [&]() {
 			float t = (float)window->GetTime();
 			if (uTime >= 0)
 				glUniform1f(uTime, t);
@@ -235,6 +229,24 @@ class ShaderSaver : public fe::Renderer {
 			}
 
 			window->SwapBuffers();
+		};
+
+#ifdef _WIN32
+		// Keep frames rendering while the window is dragged/resized (the Win32
+		// modal move/resize loop otherwise blocks the loop below).
+		window->EnableLiveResizePump();
+		window->onLiveMoveResize = [&renderFrame]() {
+			renderFrame();
+		};
+#endif
+
+		while (!window->ShouldClose()) {
+			ProcessInput();
+
+			if (mode != ScreenSaverMode::Fullscreen)
+				HotReload(fs, vs);
+
+			renderFrame();
 		}
 
 		glDeleteVertexArrays(1, &vao);
