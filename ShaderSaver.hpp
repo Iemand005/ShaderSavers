@@ -22,7 +22,7 @@
 // enum class ScreenSaverMode { Window, Preview, Fullscreen, Config };
 
 struct FrameBufferSystem {
-    bool pingPong = true;
+    bool pingPong = false;
 
     GLuint buffers[2] = {0, 0};
     GLuint fbo[2] = {0, 0};
@@ -201,6 +201,10 @@ class ShaderSaver : public fe::Renderer {
 				glUniform1f(uTime, t);
 
 			glUseProgram(shader->getId());
+
+			glClearColor(0.15f, 0.0f, 0.6f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glDisable(GL_DEPTH_TEST);
 
 			if (system.pingPong) {
 				glBindFramebuffer(GL_FRAMEBUFFER, system.getWriteFBO());
