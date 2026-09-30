@@ -86,8 +86,6 @@ add_custom_command(TARGET ShaderSaver POST_BUILD
 )
 
 if(MSVC)
-	target_compile_options(ShaderSaver PRIVATE $<$<CONFIG:Debug>:/Zi>)
-
 	target_link_options(ShaderSaver PRIVATE $<$<CONFIG:Debug>:/DEBUG>)
 
 	add_compile_options(/RTC1)
