@@ -251,6 +251,6 @@ class ShaderSaver : public fe::Renderer {
 
 		glDeleteVertexArrays(1, &vao);
 
-		Destroy();
+		destroy();
 	}
 };
