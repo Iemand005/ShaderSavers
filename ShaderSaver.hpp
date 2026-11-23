@@ -240,7 +240,7 @@ class ShaderSaver : public fe::Renderer {
 		};
 #endif
 
-		while (!window->ShouldClose()) {
+		while (!window->shouldClose()) {
 			ProcessInput();
 
 			if (mode != ScreenSaverMode::Fullscreen)

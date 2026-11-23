@@ -210,7 +210,7 @@ class ShaderSaver : public fe::Renderer {
 
 		SDL_GetMouseState(&startX, &startY);
 
-		while (!window->ShouldClose()) {
+		while (!window->shouldClose()) {
 			ProcessInput();
 
 			if (fullscreened && !cursorHidden)
