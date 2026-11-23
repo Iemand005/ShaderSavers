@@ -55,7 +55,7 @@ target_include_directories(ShaderSaver PRIVATE
 	${ENGINE_DIR}/external/imgui
 	${ENGINE_DIR}/external/kissfft
 	${ENGINE_DIR}/external/SDL/include
-	${ENGINE_DIR}/src/Engine
+	${ENGINE_DIR}/src
 )
 
 target_link_libraries(ShaderSaver PRIVATE
@@ -63,7 +63,7 @@ target_link_libraries(ShaderSaver PRIVATE
 )
 
 target_precompile_headers(ShaderSaver PRIVATE
-	"$<$<COMPILE_LANGUAGE:CXX>:${ENGINE_DIR}/src/Engine/pch.hpp>"
+	"$<$<COMPILE_LANGUAGE:CXX>:${ENGINE_DIR}/src/pch.hpp>"
 )
 
 if(NOT WIN32 AND NOT EMSCRIPTEN)
