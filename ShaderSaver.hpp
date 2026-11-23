@@ -95,7 +95,7 @@ class ShaderSaver : public fe::Renderer {
 			if (abs(x - startX) > 3 || abs(y - startY) > 3) window->PrepareClose();
 		}
 #else
-		auto window = GetWindow<fe::GLFW3Window>();
+		auto window = getWindow<fe::GLFW3Window>();
 		glfwPollEvents();
 
 		if (fullscreened) {
@@ -145,7 +145,7 @@ class ShaderSaver : public fe::Renderer {
 #if defined(FE_USE_SDL)
 		auto window = GetWindow<fe::SDLWindow>();
 #else
-		auto window = GetWindow<fe::GLFW3Window>();
+		auto window = getWindow<fe::GLFW3Window>();
 #endif
 		if (fullscreened) window->SetAnyKeyCallback([&]() {
 			window->PrepareClose();
