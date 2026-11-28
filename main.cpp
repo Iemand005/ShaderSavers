@@ -1,5 +1,10 @@
-#define FE_EXCLUDE_SDL
+#ifdef SHADERSAVER_PINGPONG
+#include "PingPongShaderSaver.hpp"
+using Saver = PingPongShaderSaver;
+#else
 #include "ShaderSaver.hpp"
+using Saver = ShaderSaver;
+#endif
 
 #include <windows.h>
 #include <string>
@@ -54,7 +59,7 @@ int WINAPI WinMain(
             previewHwnd = (HWND)std::stoull(cur);
     }
 
-    ShaderSaver game(mode == ScreenSaverMode::Fullscreen);
+    Saver game(mode == ScreenSaverMode::Fullscreen);
     game.Run(mode, previewHwnd);
 
     return 0;
