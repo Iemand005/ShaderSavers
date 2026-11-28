@@ -5,6 +5,9 @@
 #endif
 
 #include <window/IWindow.hpp>
+#ifndef GLFW_INCLUDE_NONE
+#define GLFW_INCLUDE_NONE
+#endif
 #include <window/GLFW3Window.hpp>
 #include <Graphics/IRenderDevice.hpp>
 #include <Graphics/OpenGLRenderDevice.hpp>

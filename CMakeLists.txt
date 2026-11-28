@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
-project(ShaderSaver LANGUAGES CXX)
+project(ShaderSaver LANGUAGES C CXX)
 
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -42,8 +43,10 @@ endif()
 target_include_directories(ShaderSaverGL PUBLIC
     ${ENGINE_DIR}/src
     ${ENGINE_DIR}/include
+    ${ENGINE_DIR}/external/glm
 )
 
+target_compile_definitions(ShaderSaverGL PUBLIC GLFW_INCLUDE_NONE)
 target_link_libraries(ShaderSaverGL PUBLIC glfw)
 
 if(SHADERSAVER_BUILD_SDL)
