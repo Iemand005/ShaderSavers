@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(FE_EXCLUDE_GLFW OFF)
 set(FE_EXCLUDE_VULKAN ON)
 set(FE_EXCLUDE_OPENXR ON)
-set(FE_EXCLUDE_JOLT ON)
 set(FE_EXCLUDE_KISSFFT ON)
 set(FE_EXCLUDE_IMGUI ON)
 
@@ -18,32 +17,48 @@ option(SHADERSAVER_BUILD_PINGPONG "Build the optional ping-pong variant" OFF)
 
 set(ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../FenixEngine")
 
-if(NOT TARGET Renderer)
+if(NOT TARGET glfw)
     if(NOT EXISTS "${ENGINE_DIR}/CMakeLists.txt")
         message(FATAL_ERROR "FenixEngine not found at ${ENGINE_DIR}")
     endif()
     add_subdirectory("${ENGINE_DIR}" FenixEngine)
 endif()
 
-# Only the engine objects the screensaver actually touches. Renderer supplies
-# the window abstraction, GLFW, glad and OpenGL; nothing else from Engine is
-# pulled in (no ImGui, physics system, audio, XR or Vulkan).
+# Only the objects this app touches: GLFW window, GL device and their GL
+# resource helpers. No Renderer.lib, Vulkan, ImGui, physics, audio or XR.
 add_library(ShaderSaverGL OBJECT
+    ${ENGINE_DIR}/src/window/GLFW3Window.cpp
+    ${ENGINE_DIR}/src/glad/glad.c
     ${ENGINE_DIR}/src/Graphics/OpenGLRenderDevice.cpp
     ${ENGINE_DIR}/src/Graphics/OpenGLGPUBuffers.cpp
     ${ENGINE_DIR}/src/Graphics/OpenGLGPUTexture.cpp
     ${ENGINE_DIR}/src/ImageLoader.cpp
-    ${ENGINE_DIR}/src/Scene.cpp
-    ${ENGINE_DIR}/src/physics/PhysicsObject.cpp
 )
+
+if(SHADERSAVER_BUILD_SDL)
+    target_sources(ShaderSaverGL PRIVATE ${ENGINE_DIR}/src/window/SDLWindow.cpp)
+endif()
 
 target_include_directories(ShaderSaverGL PUBLIC
     ${ENGINE_DIR}/src
     ${ENGINE_DIR}/include
 )
 
-target_compile_definitions(ShaderSaverGL PUBLIC FE_EXCLUDE_SDL EXCLUDE_JOLT)
-target_link_libraries(ShaderSaverGL PUBLIC Renderer)
+target_link_libraries(ShaderSaverGL PUBLIC glfw)
+
+if(SHADERSAVER_BUILD_SDL)
+    target_link_libraries(ShaderSaverGL PUBLIC SDL3::SDL3)
+endif()
+
+if(WIN32)
+    target_link_libraries(ShaderSaverGL PUBLIC opengl32 gdi32 user32 shell32)
+elseif(APPLE)
+    target_link_libraries(ShaderSaverGL PUBLIC "-framework OpenGL")
+else()
+    find_package(OpenGL REQUIRED)
+    find_package(X11 REQUIRED)
+    target_link_libraries(ShaderSaverGL PUBLIC OpenGL::GL X11::X11)
+endif()
 
 target_precompile_headers(ShaderSaverGL PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:${ENGINE_DIR}/src/pch.hpp>"

@@ -4,10 +4,13 @@
 #define NOMINMAX
 #endif
 
-#include <Renderer.hpp>
-#include <Graphics/IRenderDevice.hpp>
-#include <ShaderProgram.hpp>
+#include <window/IWindow.hpp>
 #include <window/GLFW3Window.hpp>
+#include <Graphics/IRenderDevice.hpp>
+#include <Graphics/OpenGLRenderDevice.hpp>
+#include <ShaderProgram.hpp>
+#include <ScreenSaverMode.hpp>
+#include <glad/glad.h>
 
 #include <cmath>
 #include <filesystem>
@@ -16,7 +19,7 @@
 #include <string>
 #include <utility>
 
-class ShaderSaverCore : public fe::Renderer {
+class ShaderSaverCore {
 protected:
 	static constexpr const char* kVertexShader = R"(
 		#version 330 core
@@ -25,6 +28,9 @@ protected:
 			gl_Position = vec4(v[gl_VertexID], 0, 1);
 		})";
 
+	std::unique_ptr<fe::IWindow> ownedWindow;
+	std::unique_ptr<fe::IRenderDevice> device;
+	std::unique_ptr<fe::ShaderProgram> shader;
 	fe::IWindow* window = nullptr;
 	GLuint vao = 0;
 	int width = 0, height = 0;
@@ -34,10 +40,9 @@ protected:
 	std::filesystem::file_time_type lastWrite;
 
 	void AttachWindow(std::unique_ptr<fe::IWindow> newWindow) {
-		renderDevice->init(newWindow.get());
-		windowDeviceMap[newWindow.get()] = renderDevice.get();
-		windows.push_back(std::move(newWindow));
-		window = windows.front().get();
+		device->init(newWindow.get());
+		window = newWindow.get();
+		ownedWindow = std::move(newWindow);
 	}
 
 	virtual void PollInput() = 0;
@@ -53,10 +58,11 @@ protected:
 
 	void Reload() {
 		try {
-			LoadShaders(fe::Shader::Vertex(kVertexShader), fe::Shader::Fragment(fragmentPath));
-			if (!shader || !shader->IsLinked()) return;
+			shader = std::make_unique<fe::ShaderProgram>(
+				fe::Shader::Vertex(kVertexShader), fe::Shader::Fragment(fragmentPath));
+			if (!shader->IsLinked()) return;
 			shader->Use();
-			renderDevice->SetInt("prevFrame", 0);
+			device->SetInt("prevFrame", 0);
 		} catch (...) {
 		}
 	}
@@ -73,19 +79,19 @@ protected:
 		if (w <= 0 || h <= 0) return;
 		width = w;
 		height = h;
-		renderDevice->Resize(w, h);
+		device->Resize(w, h);
 	}
 
 	void RenderFrame() {
 		if (!shader || !shader->IsLinked()) return;
 
 		shader->Use();
-		renderDevice->SetFloat("time", static_cast<float>(window->GetTime()));
-		renderDevice->SetInt("prevFrame", 0);
-		renderDevice->SetClearColor(0.01f, 0.0f, 0.03f, 1.0f);
-		renderDevice->clear();
-		renderDevice->DisableDepthTest();
-		renderDevice->Resize(width, height);
+		device->SetFloat("time", static_cast<float>(window->GetTime()));
+		device->SetInt("prevFrame", 0);
+		device->SetClearColor(0.01f, 0.0f, 0.03f, 1.0f);
+		device->clear();
+		device->DisableDepthTest();
+		device->Resize(width, height);
 		glBindVertexArray(vao);
 
 		DrawFrame();
@@ -93,11 +99,10 @@ protected:
 	}
 
 public:
-	ShaderSaverCore(int w, int h, bool fullscreen) : fullscreened(fullscreen) {
-		createRenderDevice(false);
-	}
+	ShaderSaverCore(int w, int h, bool fullscreen)
+		: width(w), height(h), fullscreened(fullscreen), device(std::make_unique<fe::OpenGLRenderDevice>()) {}
 
-	~ShaderSaverCore() override = default;
+	virtual ~ShaderSaverCore() = default;
 
 	void Run(ScreenSaverMode mode = ScreenSaverMode::Window, void* parent = nullptr) {
 		Configure(mode, parent);
@@ -121,7 +126,7 @@ public:
 
 		glDeleteVertexArrays(1, &vao);
 		Cleanup();
-		destroy();
+		window->Destroy();
 	}
 };
 
