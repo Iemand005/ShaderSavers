@@ -207,7 +207,7 @@ class ShaderSaver : public fe::Renderer {
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, system.getReadTex());
 
-				glUniform1i(glGetUniformLocation(shader->getId(), "prevFrame"), 0);
+                glUniform1i(glGetUniformLocation(shader->getId()), "prevFrame"), 0);
 
 				glDrawArrays(GL_TRIANGLES, 0, 3);
 

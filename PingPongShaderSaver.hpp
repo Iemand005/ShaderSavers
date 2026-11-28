@@ -130,7 +130,7 @@ class ShaderSaver : public fe::Renderer {
 			}
 
 			case ScreenSaverMode::Fullscreen: {
-				window->GoBorderlessFullscreen();
+				window->goBorderlessFullscreen();
 				// window->SetFullscreen();
 				window->Show();
 
